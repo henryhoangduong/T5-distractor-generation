@@ -17,6 +17,7 @@ import torch
 import wandb
 from dotenv import load_dotenv
 import wandb
+import math
 load_dotenv()
 
 wandb.login(key=os.getenv("WANDB_API_KEY"))
@@ -36,6 +37,8 @@ print(f"Dataset length: {len(dataset)}")
 print(f"Dataset keys: {dataset.keys()}")
 
 train_dataset = dataset["train"]
+half_len = math.floor(len(train_dataset) / 2)
+train_dataset = dataset["train"].select(range(half_len))
 eval_dataset = dataset['validation']
 test_dataset = dataset['test']
 
