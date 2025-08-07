@@ -825,6 +825,20 @@ wheels = [
 ]
 
 [[package]]
+name = "kernels"
+version = "0.9.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "huggingface-hub" },
+    { name = "packaging" },
+    { name = "pyyaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/26/4e/626c2155efa978bdec45e57bf0cfd0a76682942964fdc166cab2306d56ed/kernels-0.9.0.tar.gz", hash = "sha256:42a77d824d71f76084f7dd52dcb6d8823e243088117dc5d66006779b10f43bfb", size = 42859 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b0/60/3f9b0fba0b78bcc9ba4fa0cd3c5132402838bdb42dc69bf81fb89980d978/kernels-0.9.0-py3-none-any.whl", hash = "sha256:81705176b3488d8eb04fa2aff1a4be8dc10eeb6a4338a510e36a6b3aeeb75969", size = 37421 },
+]
+
+[[package]]
 name = "kiwisolver"
 version = "1.4.8"
 source = { registry = "https://pypi.org/simple" }
@@ -2128,6 +2142,7 @@ dependencies = [
     { name = "huggingface-hub" },
     { name = "ipykernel" },
     { name = "ipywidgets" },
+    { name = "kernels" },
     { name = "matplotlib" },
     { name = "nltk" },
     { name = "python-dotenv" },
@@ -2148,6 +2163,7 @@ requires-dist = [
     { name = "huggingface-hub", specifier = ">=0.34.3" },
     { name = "ipykernel", specifier = ">=6.30.0" },
     { name = "ipywidgets", specifier = ">=8.1.7" },
+    { name = "kernels", specifier = ">=0.9.0" },
     { name = "matplotlib", specifier = ">=3.10.3" },
     { name = "nltk", specifier = ">=3.9.1" },
     { name = "python-dotenv", specifier = ">=1.1.1" },
