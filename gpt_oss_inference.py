@@ -40,7 +40,7 @@ for example in tqdm(dataset, desc="Generating distractors"):
     responses.append({"prediction": generated, "reference": correct})
 
     # Update BLEU/ROUGE (this is illustrative — normally you'd have gold distractors)
-    bleu.add(prediction=generated.split(), references=[[correct.split()]])
+    bleu.add(prediction=generated.split(), references=[correct.split()])
     rouge.add(prediction=generated, reference=correct)
 
 # Compute final metrics
