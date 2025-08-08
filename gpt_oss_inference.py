@@ -8,7 +8,7 @@ rouge = evaluate.load("rouge")
 
 # Load RACE validation subset
 # smaller slice for testing
-dataset = load_dataset("race", split="validation[:50]")
+dataset = load_dataset("race", split="validation[:50%]")
 
 responses = []
 
