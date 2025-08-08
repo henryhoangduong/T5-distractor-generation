@@ -15,18 +15,20 @@ responses = []
 
 for example in tqdm(dataset, desc="Generating distractors"):
     question = example["question"]
-    correct = example["answer"]
-    context = example["article"]  # in RACE dataset, "article" is the passage
+    correct_label = example["answer"]
+    context = example["article"]
+    options = example["options"]
+    label_index = ord(correct_label) - ord("A")
+    correct_text = options[label_index]
 
     prompt = (
         f"Context: {context}\n"
         f"Question: {question}\n"
-        f"Correct Answer: {correct}\n"
+        f"Correct Answer: {correct_text}\n"
         "Generate three plausible but incorrect answer choices (distractors). "
         "Separate them with semicolons."
     )
 
-    # Call GPT-OSS 20B via Ollama
     resp = ollama.chat(
         model="gpt-oss:20b",
         messages=[
@@ -36,13 +38,14 @@ for example in tqdm(dataset, desc="Generating distractors"):
         options={"temperature": 0.7}
     )
 
-    generated = resp["message"]["content"]
-    responses.append({"prediction": generated, "reference": correct})
-    print("==========================")
-    print("generated: ", generated.split())
-    print("reference: ", [correct.split()])
-    bleu.add(prediction=generated.split(), references=[correct.split()])
-    rouge.add(prediction=generated, reference=correct)
+    generated_str = resp["message"]["content"].strip()
+    responses.append({"prediction": generated_str, "reference": correct_text})
+    print("===========================")
+    print("generated_str: ", generated_str)
+    print("references: ", [correct_text])
+
+    bleu.add(prediction=generated_str, references=[correct_text])
+    rouge.add(prediction=generated_str, reference=correct_text)
 
 # Compute final metrics
 results_bleu = bleu.compute()
