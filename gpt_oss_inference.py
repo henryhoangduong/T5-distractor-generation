@@ -1,7 +1,7 @@
 import ollama
 from datasets import load_dataset
 import evaluate
-
+from tqdm import tqdm
 # Initialize evaluation metrics
 bleu = evaluate.load("bleu")
 rouge = evaluate.load("rouge")
