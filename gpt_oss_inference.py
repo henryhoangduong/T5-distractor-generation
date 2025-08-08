@@ -2,6 +2,8 @@ import ollama
 from datasets import load_dataset
 import evaluate
 from tqdm import tqdm
+import torch
+torch.cuda.empty_cache()
 # Initialize evaluation metrics
 bleu = evaluate.load("bleu")
 rouge = evaluate.load("rouge")
