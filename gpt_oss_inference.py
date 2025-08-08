@@ -38,8 +38,9 @@ for example in tqdm(dataset, desc="Generating distractors"):
 
     generated = resp["message"]["content"]
     responses.append({"prediction": generated, "reference": correct})
-
-    # Update BLEU/ROUGE (this is illustrative — normally you'd have gold distractors)
+    print("==========================")
+    print("generated: ", generated.split())
+    print("reference: ", [correct.split()])
     bleu.add(prediction=generated.split(), references=[correct.split()])
     rouge.add(prediction=generated, reference=correct)
 
