@@ -8,12 +8,12 @@ rouge = evaluate.load("rouge")
 
 # Load RACE validation subset
 # smaller slice for testing
-dataset = load_dataset("race","all")
-dataset=dataset["test"]
+dataset = load_dataset("race", "all")
+dataset = dataset["test"]
 
 responses = []
 
-for example in dataset:
+for example in tqdm(dataset, desc="Generating distractors"):
     question = example["question"]
     correct = example["answer"]
     context = example["article"]  # in RACE dataset, "article" is the passage
