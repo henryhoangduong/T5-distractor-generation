@@ -2,7 +2,9 @@ from datasets import load_dataset
 import evaluate
 from tqdm import tqdm
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+from transformers import AutoModelForCausalLM, Mxfp4Config, AutoTokenizer
+from transformers import GptOssForCausalLM
+
 torch.cuda.empty_cache()
 
 bleu = evaluate.load("bleu")
@@ -39,22 +41,13 @@ Return only the distractors as a list, without explanations.
 """
 
 
-bnb_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_use_double_quant=True,
-    bnb_4bit_quant_type="nf4",  # similar compression to Mxfp4
-    bnb_4bit_compute_dtype=torch.bfloat16
-)
-model_kwargs = dict(
-    attn_implementation="flash_attention_2",  # faster if supported
-    torch_dtype=torch.bfloat16,
-    quantization_config=bnb_config,
-    use_cache=False,
-    device_map="auto",
-)
+quantization_config = Mxfp4Config(dequantize=True)
 
-model = AutoModelForCausalLM.from_pretrained(
-    "openai/gpt-oss-20b", **model_kwargs)
+model = GptOssForCausalLM.from_pretrained("openai/gpt-oss-20b",
+                                          quantization_config=quantization_config,
+                                          torch_dtype="auto",
+                                          device_map="auto"
+                                          )
 tokenizer = AutoTokenizer.from_pretrained("openai/gpt-oss-20b")
 
 
