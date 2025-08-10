@@ -106,27 +106,41 @@ total_trainable_params = sum(p.numel()
 print(f"{total_trainable_params:,} training parameters.")
 
 rouge = evaluate.load("rouge")
-
+bleu = evaluate.load("bleu")
 
 def compute_metrics(eval_pred):
     predictions, labels = eval_pred
-    if predictions.ndim == 3:  # shape: (batch, seq_len, vocab_size)
+
+    if predictions.ndim == 3:
         predictions = np.argmax(predictions, axis=-1)
+
     labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
     predictions = np.where(predictions < tokenizer.vocab_size,
                            predictions, tokenizer.pad_token_id)
+
     decoded_preds = tokenizer.batch_decode(
         predictions, skip_special_tokens=True)
     decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
 
-    result = rouge.compute(predictions=decoded_preds,
-                           references=decoded_labels,
-                           use_stemmer=True)
+    result = rouge.compute(
+        predictions=decoded_preds,
+        references=decoded_labels,
+        use_stemmer=True
+    )
 
+    pred_tokens = [pred.split() for pred in decoded_preds]
+    # nested for multiple references
+    label_tokens = [[label.split()] for label in decoded_labels]
+    bleu_result = bleu.compute(
+        predictions=pred_tokens, references=label_tokens)
+    result["bleu"] = round(bleu_result["bleu"], 4)
+
+    # Compute average generation length
     prediction_lens = [np.count_nonzero(
         pred != tokenizer.pad_token_id) for pred in predictions]
     result["gen_len"] = np.mean(prediction_lens)
 
+    # Round all metrics
     return {k: round(v, 4) for k, v in result.items()}
 
 
@@ -164,4 +178,4 @@ trainer = Seq2SeqTrainer(
 
 trainer.train()
 
-trainer.push_to_hub(repo_id="henryhoangduong/T5-small-distractor-generation")
+trainer.push_to_hub("henryhoangduong/T5-small-distractor-generation")
