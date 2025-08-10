@@ -37,7 +37,7 @@ print(f"Dataset keys: {dataset.keys()}")
 
 train_dataset = dataset["train"]
 half_len = math.floor(len(train_dataset) / 2)
-train_dataset = dataset["train"].select(range(1000))
+train_dataset = dataset["train"].select(range(500))
 eval_dataset = dataset['validation']
 test_dataset = dataset['test']
 
@@ -112,36 +112,27 @@ bleu = evaluate.load("bleu")
 def compute_metrics(eval_pred):
     predictions, labels = eval_pred
 
-    if predictions.ndim == 3:
+    if predictions.ndim > 2:  # logits case
         predictions = np.argmax(predictions, axis=-1)
 
     labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
-    predictions = np.where(predictions < tokenizer.vocab_size,
-                           predictions, tokenizer.pad_token_id)
 
     decoded_preds = tokenizer.batch_decode(
         predictions, skip_special_tokens=True)
     decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
-    print("decode_labels: ", decoded_labels)
-    result = rouge.compute(
-        predictions=decoded_preds,
-        references=decoded_labels,
-        use_stemmer=True
-    )
+
+    result = rouge.compute(predictions=decoded_preds,
+                           references=decoded_labels, use_stemmer=True)
 
     pred_tokens = [pred.split() for pred in decoded_preds]
-    # nested for multiple references
     label_tokens = [[label.split()] for label in decoded_labels]
     bleu_result = bleu.compute(
         predictions=pred_tokens, references=label_tokens)
     result["bleu"] = round(bleu_result["bleu"], 4)
 
-    # Compute average generation length
-    prediction_lens = [np.count_nonzero(
-        pred != tokenizer.pad_token_id) for pred in predictions]
+    prediction_lens = [len(pred.split()) for pred in decoded_preds]
     result["gen_len"] = np.mean(prediction_lens)
 
-    # Round all metrics
     return {k: round(v, 4) for k, v in result.items()}
 
 
