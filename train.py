@@ -4,7 +4,6 @@ from transformers import (
     Seq2SeqTrainingArguments,
     Seq2SeqTrainer,
     AutoTokenizer,
-    DataCollatorForSeq2Seq,
 )
 import os
 
@@ -26,9 +25,9 @@ login(os.getenv("HF_TOKEN"))
 dataset = load_dataset("ehovy/race", "all")
 
 MODEL = 't5-small'                  # the Model name here
-BATCH_SIZE = 16                     # The batch size here
+BATCH_SIZE = 20                     # The batch size here
 NUM_PROCS = 10                      # The num of proccess here
-EPOCHS = 3                          # The number of training Epochs here
+EPOCHS = 1                          # The number of training Epochs here
 OUT_DIR = 'results_t5small'         # the outout directory name here
 MAX_LENGTH = 512                    # the max length of the sequence here
 
@@ -38,7 +37,7 @@ print(f"Dataset keys: {dataset.keys()}")
 
 train_dataset = dataset["train"]
 half_len = math.floor(len(train_dataset) / 2)
-train_dataset = dataset["train"].select(range(half_len))
+train_dataset = dataset["train"].select(range(1000))
 eval_dataset = dataset['validation']
 test_dataset = dataset['test']
 
