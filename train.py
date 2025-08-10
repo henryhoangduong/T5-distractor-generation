@@ -108,6 +108,7 @@ print(f"{total_trainable_params:,} training parameters.")
 rouge = evaluate.load("rouge")
 bleu = evaluate.load("bleu")
 
+
 def compute_metrics(eval_pred):
     predictions, labels = eval_pred
 
@@ -121,7 +122,7 @@ def compute_metrics(eval_pred):
     decoded_preds = tokenizer.batch_decode(
         predictions, skip_special_tokens=True)
     decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
-
+    print("decode_labels: ", decoded_labels)
     result = rouge.compute(
         predictions=decoded_preds,
         references=decoded_labels,
