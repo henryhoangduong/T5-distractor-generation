@@ -27,7 +27,7 @@ dataset = load_dataset("ehovy/race", "all")
 MODEL = 't5-small'                  # the Model name here
 BATCH_SIZE = 20                     # The batch size here
 NUM_PROCS = 10                      # The num of proccess here
-EPOCHS = 1                          # The number of training Epochs here
+EPOCHS = 3                          # The number of training Epochs here
 OUT_DIR = 'results_t5small'         # the outout directory name here
 MAX_LENGTH = 512                    # the max length of the sequence here
 
@@ -35,9 +35,8 @@ print(f"Dataset type: {type(dataset)}")
 print(f"Dataset length: {len(dataset)}")
 print(f"Dataset keys: {dataset.keys()}")
 
+
 train_dataset = dataset["train"]
-half_len = math.floor(len(train_dataset) / 2)
-train_dataset = dataset["train"].select(range(500))
 eval_dataset = dataset['validation']
 test_dataset = dataset['test']
 
@@ -65,10 +64,10 @@ def preprocess_function(examples):
         distractors = [opt for i, opt in enumerate(
             options) if i != correct_index]
 
-        for distractor in distractors:
-            prompt = f"generate distractor: {question} answer: {correct_answer} context: {article}"
-            inputs.append(prompt)
-            targets.append(distractor)
+        prompt = f"generate distractor: {question} answer: {correct_answer} context: {article}"
+        inputs.append(prompt)
+        final_distractor = " | ".join(distractors)
+        targets.append(final_distractor)
 
     model_inputs = tokenizer(
         inputs,
@@ -112,7 +111,7 @@ bleu = evaluate.load("bleu")
 def compute_metrics(eval_pred):
     predictions, labels = eval_pred
 
-    if predictions.ndim > 2:  # logits case
+    if predictions.ndim > 2:
         predictions = np.argmax(predictions, axis=-1)
 
     labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
@@ -124,8 +123,8 @@ def compute_metrics(eval_pred):
     result = rouge.compute(predictions=decoded_preds,
                            references=decoded_labels, use_stemmer=True)
 
-    pred_tokens = [pred.split() for pred in decoded_preds]
-    label_tokens = [[label.split()] for label in decoded_labels]
+    pred_tokens = [pred for pred in decoded_preds]
+    label_tokens = [[label] for label in decoded_labels]
     bleu_result = bleu.compute(
         predictions=pred_tokens, references=label_tokens)
     result["bleu"] = round(bleu_result["bleu"], 4)
@@ -136,38 +135,43 @@ def compute_metrics(eval_pred):
     return {k: round(v, 4) for k, v in result.items()}
 
 
-training_args = Seq2SeqTrainingArguments(
-    output_dir=OUT_DIR,
-    num_train_epochs=EPOCHS,
-    per_device_train_batch_size=BATCH_SIZE,
-    per_device_eval_batch_size=BATCH_SIZE,
-    warmup_steps=500,
-    weight_decay=0.01,
-    logging_dir=OUT_DIR,
-    logging_steps=50,
-    fp16=True,
-    eval_strategy='epoch',
-    eval_steps=1000,
-    save_strategy='epoch',
-    save_steps=1000,
-    save_total_limit=3,
-    learning_rate=5e-4,
-    dataloader_num_workers=8,
-    report_to='wandb',
-    predict_with_generate=True,
-    push_to_hub=True,
-    remove_unused_columns=False
-)
+def main():
+    training_args = Seq2SeqTrainingArguments(
+        output_dir=OUT_DIR,
+        num_train_epochs=EPOCHS,
+        per_device_train_batch_size=BATCH_SIZE,
+        per_device_eval_batch_size=BATCH_SIZE,
+        warmup_steps=500,
+        weight_decay=0.01,
+        logging_dir=OUT_DIR,
+        logging_steps=50,
+        fp16=True,
+        eval_strategy='epoch',
+        eval_steps=1000,
+        save_strategy='epoch',
+        save_steps=1000,
+        save_total_limit=3,
+        learning_rate=5e-4,
+        dataloader_num_workers=8,
+        report_to='wandb',
+        predict_with_generate=True,
+        push_to_hub=True,
+        remove_unused_columns=False
+    )
 
-trainer = Seq2SeqTrainer(
-    model=model,
-    args=training_args,
-    train_dataset=tokenized_train_dataset,
-    eval_dataset=tokenized_eval_dataset,
-    tokenizer=tokenizer,
-    compute_metrics=compute_metrics
-)
+    trainer = Seq2SeqTrainer(
+        model=model,
+        args=training_args,
+        train_dataset=tokenized_train_dataset,
+        eval_dataset=tokenized_eval_dataset,
+        tokenizer=tokenizer,
+        compute_metrics=compute_metrics
+    )
 
-trainer.train()
+    trainer.train()
 
-trainer.push_to_hub("henryhoangduong/T5-small-distractor-generation")
+    trainer.push_to_hub("henryhoangduong/T5-small-distractor-generation")
+
+
+if __name__ == "__main__":
+    main()
