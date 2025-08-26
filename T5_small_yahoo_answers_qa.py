@@ -101,4 +101,4 @@ trainer = Seq2SeqTrainer(
 
 trainer.train()
 trainer.push_to_hub(
-    "henryhoangduong/T5_small_distractor_generation_yahoo_answers_qa")
+    "henryhoangduong/T5_small_distractor_generation_yahoo_answers_qa_gpu")
