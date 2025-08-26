@@ -32,7 +32,7 @@ model = T5ForConditionalGeneration.from_pretrained(MODEL_NAME)
 data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model)
 
 
-yahoo_answers_qa = load_dataset(DATA_NAME)
+yahoo_answers_qa = load_dataset(DATA_NAME, trust_remote_code=True)
 yahoo_answers_qa = yahoo_answers_qa["train"].train_test_split(test_size=0.3)
 
 
