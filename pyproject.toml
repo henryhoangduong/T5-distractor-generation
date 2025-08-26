@@ -15,6 +15,7 @@ dependencies = [
     "matplotlib>=3.10.3",
     "nltk>=3.9.1",
     "ollama>=0.5.3",
+    "optimum-neuron>=0.0.3",
     "python-dotenv>=1.1.1",
     "rouge-score>=0.1.2",
     "sentencepiece>=0.2.0",

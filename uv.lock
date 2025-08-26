@@ -1425,6 +1425,36 @@ wheels = [
 ]
 
 [[package]]
+name = "optimum"
+version = "1.27.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "huggingface-hub" },
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "torch" },
+    { name = "transformers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f9/58/fd6c82021697ae2f1de710af65fa177ad46a620a10c16974546085d1e7a8/optimum-1.27.0.tar.gz", hash = "sha256:ad80d80de336ca5e1e6b4f5ade824da731a945846208871acd2e2ada91002a7b", size = 344027 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/98/2d/4978f9b0ddb6a6af12ff71831f78f84e9dd488f401367290d11a92870b97/optimum-1.27.0-py3-none-any.whl", hash = "sha256:11efa8934860d7456704456405a4bd2d3007bcce098c4430d95840dfdb80e16d", size = 425787 },
+]
+
+[[package]]
+name = "optimum-neuron"
+version = "0.0.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "huggingface-hub" },
+    { name = "optimum" },
+    { name = "transformers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/19/35/af2f8b9f5ea9b7b0de233abc3a386ed803fb17105cbba7dca836516e8b36/optimum-neuron-0.0.3.tar.gz", hash = "sha256:c228ecbdb00dbe457734029d361647694cf683a75dade01efe56418bd2440291", size = 47684 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ac/6a/d9ba19058321551bb2081ace62882974d9158871637a349c5f88924d0499/optimum_neuron-0.0.3-py3-none-any.whl", hash = "sha256:76f827d6a7b4d398f1c6672d4589adfa394b2deb7d496ba78db42795f059ff00", size = 46093 },
+]
+
+[[package]]
 name = "packaging"
 version = "25.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2219,6 +2249,7 @@ dependencies = [
     { name = "matplotlib" },
     { name = "nltk" },
     { name = "ollama" },
+    { name = "optimum-neuron" },
     { name = "python-dotenv" },
     { name = "rouge-score" },
     { name = "sentencepiece" },
@@ -2242,6 +2273,7 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.10.3" },
     { name = "nltk", specifier = ">=3.9.1" },
     { name = "ollama", specifier = ">=0.5.3" },
+    { name = "optimum-neuron", specifier = ">=0.0.3" },
     { name = "python-dotenv", specifier = ">=1.1.1" },
     { name = "rouge-score", specifier = ">=0.1.2" },
     { name = "sentencepiece", specifier = ">=0.2.0" },

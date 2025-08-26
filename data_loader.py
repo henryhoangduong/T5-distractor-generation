@@ -1,8 +1,9 @@
 import random
-import torch
+
 import numpy as np
-from torch.utils.data import Dataset
+import torch
 from datasets import load_dataset
+from torch.utils.data import Dataset
 
 
 class RaceQuestionAnswerGeneration(Dataset):

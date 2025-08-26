@@ -1,22 +1,18 @@
-from transformers import AutoTokenizer
-from transformers import (
-    AutoModelForSeq2SeqLM,
-    Seq2SeqTrainingArguments,
-    Seq2SeqTrainer,
-    AutoTokenizer,
-)
+import math
 import os
 
-from datasets import load_dataset
-from huggingface_hub import login
-import pandas as pd
-import numpy as np
 import evaluate
+import numpy as np
+import pandas as pd
 import torch
-import wandb
+from datasets import load_dataset
 from dotenv import load_dotenv
+from huggingface_hub import login
+from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
+                          Seq2SeqTrainingArguments)
+
 import wandb
-import math
+
 load_dotenv()
 
 wandb.login(key=os.getenv("WANDB_API_KEY"))
@@ -96,13 +92,6 @@ tokenized_eval_dataset = eval_dataset.map(
 model = AutoModelForSeq2SeqLM.from_pretrained(MODEL)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
-
-total_params = sum(p.numel() for p in model.parameters())
-print(f"{total_params:,} total parameters.")
-
-total_trainable_params = sum(p.numel()
-                             for p in model.parameters() if p.requires_grad)
-print(f"{total_trainable_params:,} training parameters.")
 
 rouge = evaluate.load("rouge")
 bleu = evaluate.load("bleu")

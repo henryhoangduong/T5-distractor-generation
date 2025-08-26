@@ -1,8 +1,9 @@
-import ollama
-from datasets import load_dataset
 import evaluate
-from tqdm import tqdm
+import ollama
 import torch
+from datasets import load_dataset
+from tqdm import tqdm
+
 torch.cuda.empty_cache()
 
 bleu = evaluate.load("bleu")
@@ -10,7 +11,7 @@ rouge = evaluate.load("rouge")
 
 
 dataset = load_dataset("race", "all")
-dataset = dataset["test"].select(range(1000))
+dataset = dataset["validation"].select(range(1000))
 
 responses = []
 
@@ -48,7 +49,6 @@ for example in tqdm(dataset, desc="Generating distractors"):
     bleu.add(prediction=generated_str, references=[correct_text])
     rouge.add(prediction=generated_str, reference=correct_text)
 
-# Compute final metrics
 results_bleu = bleu.compute()
 results_rouge = rouge.compute()
 

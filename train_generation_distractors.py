@@ -1,15 +1,15 @@
 import os
-import sys
 import random
+import sys
 from datetime import datetime
+
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from data_loader import RaceDistractorGeneration
-
 
 t5_model = 't5-base'
 save_dir = "model_weights/"
