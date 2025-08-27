@@ -79,6 +79,7 @@ tokenized_dataset = yahoo_answers_qa.map(preprocess_function, batched=True)
 training_args = Seq2SeqTrainingArguments(
     output_dir="./results",
     eval_strategy="epoch",
+    fp16=True,
     learning_rate=L_RATE,
     per_device_train_batch_size=BATCH_SIZE,
     per_device_eval_batch_size=PER_DEVICE_EVAL_BATCH,
